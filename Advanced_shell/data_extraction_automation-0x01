@@ -1,1 +1,27 @@
+#!/bin/bash
 
+# Task 1: Extract Pokémon Data
+# Extracts name, height, weight, and type from data.json
+
+INPUT_FILE="data.json"
+
+# Check if input file exists
+if [ ! -f "$INPUT_FILE" ]; then
+    echo "Error: $INPUT_FILE not found!"
+    exit 1
+fi
+
+# Extract data using jq
+name=$(jq -r '.name' "$INPUT_FILE" | sed 's/.*/\u&/')  # Capitalize first letter
+type=$(jq -r '.types[0].type.name' "$INPUT_FILE" | sed 's/.*/\u&/')  # Capitalize first letter
+weight=$(jq -r '.weight' "$INPUT_FILE")
+height=$(jq -r '.height' "$INPUT_FILE")
+
+# Convert weight from hectograms to kg (divide by 10)
+weight_kg=$(echo "$weight" | awk '{print $1/10}')
+
+# Convert height from decimeters to meters (divide by 10)
+height_m=$(echo "$height" | awk '{print $1/10}')
+
+# Format and print output
+echo "$name is of type $type, weighs ${weight_kg}kg, and is ${height_m}m tall."
